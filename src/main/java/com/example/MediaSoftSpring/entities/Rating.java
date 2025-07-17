@@ -8,9 +8,11 @@ import lombok.*;
 @ToString
 public class Rating {
     @NonNull
-    private final Long visitorId;
+    private final Long id;
     @NonNull
-    private final Long restaurantId;
-    private final int rating;
+    private Long visitorId;
+    @NonNull
+    private Long restaurantId;
+    private int rating;
     private String text;
 }

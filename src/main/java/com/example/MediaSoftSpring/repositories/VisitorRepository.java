@@ -1,5 +1,6 @@
 package com.example.MediaSoftSpring.repositories;
 
+import com.example.MediaSoftSpring.dto.VisitorRequestDTO;
 import com.example.MediaSoftSpring.entities.Visitor;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Repository;
@@ -25,6 +26,10 @@ public class VisitorRepository {
 
     public boolean remove(Visitor visitor){
         return visitors.remove(visitor);
+    }
+
+    public boolean removeById(Long id){
+        return visitors.removeIf(elem -> elem.getId().equals(id));
     }
 
     public List<Visitor> findAll(){

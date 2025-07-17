@@ -16,11 +16,6 @@ public class Restaurant {
         CHINESE("Китайская");
 
         private final String title;
-
-        @Override
-        public String toString(){
-            return title;
-        }
     }
     @NonNull
     private final Long id;
