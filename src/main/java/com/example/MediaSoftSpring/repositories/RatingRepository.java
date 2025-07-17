@@ -20,6 +20,7 @@ public class RatingRepository {
                     elem.getRestaurantId().equals(rating.getRestaurantId())){
                 return false;
             }
+            if(elem.getId().equals(rating.getId())) return false;
         }
         ratings.add(rating);
         return true;
@@ -29,17 +30,15 @@ public class RatingRepository {
         return ratings.remove(rating);
     }
 
+    public boolean removeById(Long id){
+        return ratings.removeIf(elem -> elem.getId().equals(id));
+    }
+
     public List<Rating> findAll(){
         return ratings;
     }
 
-    public Rating findById(Long visitorId, Long restaurantId){
-        for(Rating rating: ratings){
-            if(rating.getVisitorId().equals(visitorId) &&
-                    rating.getRestaurantId().equals(restaurantId)){
-                return rating;
-            }
-        }
-        return null;
+    public Rating findById(Long id){
+        return ratings.stream().filter(elem -> elem.getId().equals(id)).findFirst().orElse(null);
     }
 }

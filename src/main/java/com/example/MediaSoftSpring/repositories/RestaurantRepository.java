@@ -1,5 +1,6 @@
 package com.example.MediaSoftSpring.repositories;
 
+import com.example.MediaSoftSpring.dto.RestaurantRequestDTO;
 import com.example.MediaSoftSpring.entities.Restaurant;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Repository;
@@ -26,6 +27,10 @@ public class RestaurantRepository {
 
     public boolean remove(Restaurant restaurant){
         return restaurants.remove(restaurant);
+    }
+
+    public boolean removeById(Long id){
+        return restaurants.removeIf(elem -> elem.getId().equals(id));
     }
 
     public List<Restaurant> findAll(){
