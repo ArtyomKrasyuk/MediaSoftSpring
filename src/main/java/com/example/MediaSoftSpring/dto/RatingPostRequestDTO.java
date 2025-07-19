@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
-@Schema(description = "DTO с данными оценки для ввода")
-public record RatingRequestDTO(
+@Schema(description = "DTO с данными оценки для сохранения")
+public record RatingPostRequestDTO(
         @Min(value = 1, message = "Идентификатор пользователя должен быть не меньше 1")
         @Schema(description = "Идентификатор посетителя", example = "1752508268474")
         Long visitorId,

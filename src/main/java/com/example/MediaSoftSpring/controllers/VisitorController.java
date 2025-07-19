@@ -30,35 +30,58 @@ public class VisitorController {
 
     @GetMapping
     @Operation(summary = "Вывод всех посетителей", description = "Возвращает список всех посетителей")
-    public List<VisitorResponseDTO> findAll(){
-        return service.findAll();
+    public ResponseEntity<List<VisitorResponseDTO>> findAll(){
+        try {
+            return ResponseEntity.ok(service.findAll());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Поиск посетителя по id", description = "Возвращает информацию о посетителе с конкретным id")
-    public VisitorResponseDTO findById(@PathVariable @Parameter(description = "Идентификатор посетителя", required = true)
+    public ResponseEntity<VisitorResponseDTO> findById(@PathVariable @Parameter(description = "Идентификатор посетителя", required = true)
            @Positive(message = "Id должен быть больше 0") @NotNull(message = "Id не может быть null") Long id){
-        return service.findById(id);
+        try {
+            return ResponseEntity.ok(service.findById(id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping
     @Operation(summary = "Добавление посетителя", description = "Создаёт нового посетителя, возвращает true при успешном создании, иначе false")
-    public ResponseEntity<Boolean> save(@RequestBody @Valid @Parameter(description = "DTO с данными посетителя для ввода", required = true) VisitorRequestDTO dto){
-        return ResponseEntity.ok(service.save(dto));
+    public ResponseEntity<?> save(@RequestBody @Valid @Parameter(description = "DTO с данными посетителя для ввода", required = true) VisitorRequestDTO dto){
+        try {
+            service.save(dto);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Изменение данных посетителя", description = "Изменяет объект посетителя, возвращает true при успешном изменении, иначе false")
-    public ResponseEntity<Boolean> update(@PathVariable @Parameter(description = "Идентификатор посетителя", required = true)
+    public ResponseEntity<?> update(@PathVariable @Parameter(description = "Идентификатор посетителя", required = true)
               @Positive(message = "Id должен быть больше 0") @NotNull(message = "Id не может быть null") Long id,
               @RequestBody @Valid @Parameter(description = "DTO с данными посетителя для ввода", required = true) VisitorRequestDTO dto){
-        return ResponseEntity.ok(service.update(id, dto));
+        try {
+            service.update(id, dto);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удаление посетителя", description = "Удаляет объект посетителя, возвращает true при успешном удалении, иначе false")
-    public ResponseEntity<Boolean> delete(@PathVariable @Parameter(description = "Идентификатор посетителя", required = true)
+    public ResponseEntity<?> delete(@PathVariable @Parameter(description = "Идентификатор посетителя", required = true)
            @Positive(message = "Id должен быть больше 0") @NotNull(message = "Id не может быть null") Long id){
-        return ResponseEntity.ok(service.removeById(id));
+        try {
+            service.removeById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.example.MediaSoftSpring.services;
 import com.example.MediaSoftSpring.dto.VisitorRequestDTO;
 import com.example.MediaSoftSpring.dto.VisitorResponseDTO;
 import com.example.MediaSoftSpring.entities.Rating;
+import com.example.MediaSoftSpring.entities.Restaurant;
 import com.example.MediaSoftSpring.entities.Visitor;
 import com.example.MediaSoftSpring.mapstruct.VisitorMapper;
 import com.example.MediaSoftSpring.repositories.RatingRepository;
@@ -30,66 +31,43 @@ public class VisitorService {
         this.mapper = mapper;
     }
 
-    public boolean save(VisitorRequestDTO dto){
-        return visitorRepository.save(mapper.toEntity(dto));
+    public void save(VisitorRequestDTO dto){
+        visitorRepository.save(mapper.toEntity(dto));
     }
 
-    public boolean remove(Visitor visitor){
-        boolean result = visitorRepository.remove(visitor);
-        if(result){
-            removeRatings(visitor.getId());
-            return true;
-        }
-        else return false;
-    }
-
-    public boolean removeById(Long id){
-        boolean result = visitorRepository.removeById(id);
-        if(result){
-            removeRatings(id);
-            return true;
-        }
-        else return false;
-    }
-
-    public boolean update(Long id, VisitorRequestDTO dto){
-        Visitor visitor = visitorRepository.findById(id);
-        if(visitor != null){
-            visitor.setName(dto.name());
-            visitor.setAge(dto.age());
-            visitor.setSex(dto.sex());
-            return true;
-        }
-        else return false;
+    public VisitorResponseDTO findById(Long id){
+        return mapper.toDTO(visitorRepository.findById(id).orElse(null));
     }
 
     public List<VisitorResponseDTO> findAll(){
         return visitorRepository.findAll().stream().map(mapper::toDTO).toList();
     }
 
-    public VisitorResponseDTO findById(Long id){
-        return mapper.toDTO(visitorRepository.findById(id));
+    // При удалении пользователя происходит удаление всех его оценок и пересчёт средних оценок ресторанов
+    public void removeById(Long id){
+        Visitor visitor = visitorRepository.findById(id).orElseThrow();
+        List<Long> restaurantIds = visitor.getRatings().stream().map(elem -> elem.getId().getRestaurantId()).toList();
+        visitor.getRatings().clear();
+        visitorRepository.deleteById(id);
+        List<Restaurant> restaurants = restaurantRepository.findAllById(restaurantIds);
+        restaurants.forEach(this::changeRestaurantRating);
     }
 
-    // Метод для удаления всех оценкок пользователя, который был удалён
-    private void removeRatings(Long id){
-        List<Rating> ratings = ratingRepository.findAll().stream().filter(elem -> elem.getVisitorId().equals(id)).toList();
-        ratings.forEach(rating -> {
-            ratingRepository.remove(rating);
-            changeRestaurantRating(rating.getRestaurantId());
-        });
+    public void update(Long id, VisitorRequestDTO dto){
+        Visitor visitor = visitorRepository.findById(id).orElseThrow();
+        mapper.update(dto, visitor);
+        visitorRepository.save(visitor);
     }
 
     // Метод для изменения рейтинга ресторана
-    private void changeRestaurantRating(Long id){
+    private void changeRestaurantRating(Restaurant restaurant){
         BigDecimal decimal = BigDecimal.ZERO;
-        long count = 0;
-        for(Rating rating: ratingRepository.findAll()){
-            if(rating.getRestaurantId().equals(id)){
-                decimal = decimal.add(BigDecimal.valueOf(rating.getRating()));
-                count++;
-            }
+        List<Rating> ratings = ratingRepository.findByRestaurantId(restaurant.getId());
+        if(!ratings.isEmpty()){
+            for(Rating rating: ratings) decimal = decimal.add(BigDecimal.valueOf(rating.getRating()));
+            decimal = decimal.divide(BigDecimal.valueOf(restaurant.getRatings().size()), 2, RoundingMode.HALF_UP);
         }
-        restaurantRepository.changeRestaurantRating(id, decimal.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP));
+        restaurant.setRating(decimal);
+        restaurantRepository.save(restaurant);
     }
 }
