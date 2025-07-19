@@ -3,6 +3,7 @@ package com.example.MediaSoftSpring.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ public record RestaurantRequestDTO(
         String cuisine,
         @Min(value = 0, message = "Средний счёт не может быть отрицательным")
         @Schema(description = "Средний счёт в ресторане", example = "10000")
+        @NotNull(message = "Средний счёт не может быть отрицательным")
         BigDecimal averageBill
 ) {
 }
