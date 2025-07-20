@@ -47,7 +47,8 @@ public class RatingService {
     }
 
     public void removeById(Long visitorId, Long restaurantId){
-        ratingRepository.deleteById(new RatingId(visitorId, restaurantId));
+        Rating rating = ratingRepository.findById(new RatingId(visitorId, restaurantId)).orElseThrow();
+        ratingRepository.delete(rating);
         Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow();
         changeRestaurantRating(restaurant);
     }
