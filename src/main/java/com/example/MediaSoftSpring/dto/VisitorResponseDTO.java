@@ -13,4 +13,7 @@ public record VisitorResponseDTO(
         @Schema(description = "Пол посетителя", allowableValues = {"Мужской", "Женский"})
         String sex
 ) {
+        public void setId(long l) {
+
+        }
 }

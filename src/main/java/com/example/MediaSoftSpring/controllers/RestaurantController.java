@@ -32,22 +32,14 @@ public class RestaurantController {
     @GetMapping
     @Operation(summary = "Вывод всех ресторанов", description = "Возвращает список всех ресторанов")
     public ResponseEntity<List<RestaurantResponseDTO>> findAll(){
-        try {
-            return ResponseEntity.ok(service.findAll());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Поиск ресторана по id", description = "Возвращает информацию о ресторане с конкретным id")
     public ResponseEntity<RestaurantResponseDTO> findById(@PathVariable @Parameter(description = "Идентификатор ресторана", required = true)
            @Positive(message = "Id должен быть больше 0") @NotNull(message = "Id не может быть null") Long id){
-        try {
-            return ResponseEntity.ok(service.findById(id));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @GetMapping("/rating")
@@ -55,22 +47,14 @@ public class RestaurantController {
             description = "Возвращает информацию о ресторанах, у которых оценка не меньше заданной в параметре запроса")
     public ResponseEntity<List<RestaurantResponseDTO>> findByRating(@RequestParam(defaultValue = "0")
                              @Parameter(description = "Оценка ресторана") BigDecimal rating){
-        try{
-            return ResponseEntity.ok(service.findByRating(rating));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(service.findByRating(rating));
     }
 
     @PostMapping
     @Operation(summary = "Добавление ресторана", description = "Создаёт новый ресторан, возвращает true при успешном создании, иначе false")
     public ResponseEntity<?> save(@RequestBody @Valid @Parameter(description = "DTO с данными ресторана для ввода", required = true) RestaurantRequestDTO dto){
-        try {
-            service.save(dto);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        service.save(dto);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
@@ -78,23 +62,15 @@ public class RestaurantController {
     public ResponseEntity<?> update(@PathVariable @Parameter(description = "Идентификатор ресторана", required = true)
            @Positive(message = "Id должен быть больше 0") @NotNull(message = "Id не может быть null") Long id,
            @RequestBody @Valid @Parameter(description = "DTO с данными ресторана для ввода", required = true) RestaurantRequestDTO dto){
-        try {
-            service.update(id, dto);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        service.update(id, dto);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удаление ресторана", description = "Удаляет объект ресторана, возвращает true при успешном удалении, иначе false")
     public ResponseEntity<?> delete(@PathVariable @Parameter(description = "Идентификатор ресторана", required = true)
            @Positive(message = "Id должен быть больше 0") @NotNull(message = "Id не может быть null") Long id){
-        try {
-            service.removeById(id);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        service.removeById(id);
+        return ResponseEntity.ok().build();
     }
 }
