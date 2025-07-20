@@ -46,7 +46,7 @@ public class VisitorService {
     // При удалении пользователя происходит удаление всех его оценок и пересчёт средних оценок ресторанов
     public void removeById(Long id){
         Visitor visitor = visitorRepository.findById(id).orElseThrow();
-        List<Long> restaurantIds = visitor.getRatings().stream().map(elem -> elem.getId().getRestaurantId()).toList();
+        List<Long> restaurantIds = visitor.getRatings().stream().map(elem -> elem.getId().getRestaurantId()).sorted().toList();
         visitor.getRatings().clear();
         visitorRepository.deleteById(id);
         List<Restaurant> restaurants = restaurantRepository.findAllById(restaurantIds);
