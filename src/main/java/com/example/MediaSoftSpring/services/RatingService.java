@@ -113,7 +113,8 @@ public class RatingService {
                 count++;
             }
         }
-        restaurantRepository.changeRestaurantRating(id, decimal.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP));
+        if(count == 0) restaurantRepository.changeRestaurantRating(id, BigDecimal.ZERO);
+        else restaurantRepository.changeRestaurantRating(id, decimal.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP));
     }
 
     private boolean visitorExists(Long id){
